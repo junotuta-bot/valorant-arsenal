@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VALORANT ARSENAL & DATABASE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0f1923;
+            background-image: radial-gradient(#ece8e1 0.75px, transparent 0.75px);
+            background-size: 24px 24px;
+        }
+        .chat-scroll::-webkit-scrollbar { width: 4px; }
+        .chat-scroll::-webkit-scrollbar-thumb { background: #ef4444; border-radius: 4px; }
+    </style>
+</head>
+<body class="text-gray-100 min-h-screen flex flex-col font-sans relative">
+
+    <!-- NAVBAR -->
+    <header class="bg-[#111c24]/90 backdrop-blur-md border-b border-red-500/30 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <span class="bg-red-500 text-white font-black text-xl px-2.5 py-0.5 rounded tracking-tighter">V</span>
+                <span class="text-lg md:text-xl font-bold tracking-widest text-white uppercase">Valorant <span class="text-red-500">Database</span></span>
+            </div>
+            
+            <!-- THANH ĐIỀU HƯỚNG TAB CHÍNH -->
+            <nav class="flex gap-2 bg-[#16222f] p-1 rounded-xl border border-gray-800 text-xs md:text-sm font-bold">
+                <button onclick="switchTab('weapons')" id="tab-btn-weapons" class="tab-btn px-4 py-1.5 rounded-lg bg-red-600 text-white transition">Vũ Khí</button>
+                <button onclick="switchTab('agents')" id="tab-btn-agents" class="tab-btn px-4 py-1.5 rounded-lg text-gray-400 hover:text-white transition">Đặc Vụ & Kỹ Năng</button>
+                <button onclick="switchTab('shields')" id="tab-btn-shields" class="tab-btn px-4 py-1.5 rounded-lg text-gray-400 hover:text-white transition">Giáp & Trang Bị</button>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <span id="user-display" class="text-xs text-gray-400 hidden md:inline">Đang tải...</span>
+                <button onclick="handleLogout()" class="bg-red-500/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/40 text-xs px-3.5 py-1.5 rounded-lg font-medium transition">Đăng Xuất</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- NỘI DUNG CHÍNH -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full pb-32">
+        
+        <!-- ================= TAB 1: VŨ KHÍ ================= -->
+        <section id="section-weapons">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-gray-800 pb-4">
+                <div class="flex items-center gap-4">
+                    <h1 class="text-2xl font-black uppercase tracking-wider text-white"><i class="fa-solid fa-crosshairs text-red-500"></i> Kho Súng</h1>
+                    <input type="text" id="search-input" oninput="filterWeapons()" placeholder="Tìm kiếm súng..." class="bg-[#1b2733] text-xs text-gray-200 px-3 py-1.5 rounded-lg border border-gray-700 focus:outline-none focus:border-red-500">
+                </div>
+                <div class="flex flex-wrap gap-2 text-xs" id="category-filter">
+                    <button onclick="setCategory('ALL')" class="category-btn active px-3 py-1.5 rounded bg-red-600 text-white">Tất Cả</button>
+                    <button onclick="setCategory('Rifle')" class="category-btn px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300">Súng Trường</button>
+                    <button onclick="setCategory('Sniper')" class="category-btn px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300">Súng Ngắm</button>
+                    <button onclick="setCategory('SMG')" class="category-btn px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300">SMG</button>
+                    <button onclick="setCategory('Sidearm')" class="category-btn px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300">Súng Lục</button>
+                </div>
+            </div>
+            <div id="weapons-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+        </section>
+
+        <!-- ================= TAB 2: ĐẶC VỤ & KỸ NĂNG ================= -->
+        <section id="section-agents" class="hidden">
+            <div class="mb-8 border-b border-gray-800 pb-4">
+                <h1 class="text-2xl font-black uppercase tracking-wider text-white"><i class="fa-solid fa-user-ninja text-red-500"></i> Hồ Sơ Đặc Vụ & Bộ Kỹ Năng</h1>
+                <p class="text-xs text-gray-400 mt-1">Chọn một đặc vụ để khám phá tiểu sử và chi tiết các chiêu thức Q, E, C, X</p>
+            </div>
+            <div id="agents-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+        </section>
+
+        <!-- ================= TAB 3: GIÁP & TRANG BỊ ================= -->
+        <section id="section-shields" class="hidden">
+            <div class="mb-8 border-b border-gray-800 pb-4">
+                <h1 class="text-2xl font-black uppercase tracking-wider text-white"><i class="fa-solid fa-shield-halved text-red-500"></i> Giáp Phòng Hộ</h1>
+                <p class="text-xs text-gray-400 mt-1">Chỉ số chống chịu và khả năng giảm tải sát thương của trang bị bảo vệ</p>
+            </div>
+            <div id="shields-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto"></div>
+        </section>
+
+        <div id="loading" class="text-center py-20">
+            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-red-500 mb-3"></i>
+            <p class="text-gray-400 text-sm">Đang tải dữ liệu Valorant...</p>
+        </div>
+    </main>
+
+    <!-- THANH SO SÁNH VŨ KHÍ -->
+    <div id="compare-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#16222f] border border-red-500 rounded-full px-6 py-3 shadow-[0_0_20px_rgba(239,68,68,0.3)] z-40 hidden flex items-center gap-4">
+        <span class="text-sm font-bold"><span id="compare-count">1</span>/2 Súng</span>
+        <button onclick="openCompareModal()" class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-1 rounded-full font-bold transition hidden" id="btn-do-compare">So Sánh Ngay</button>
+        <button onclick="clearCompare()" class="text-gray-400 hover:text-white ml-2"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- MODAL SO SÁNH SÚNG -->
+    <div id="compare-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 items-center justify-center p-4 hidden flex">
+        <div class="bg-[#111c24] border border-gray-700 rounded-2xl w-full max-w-4xl p-6 relative shadow-2xl">
+            <button onclick="closeCompareModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-black uppercase text-center text-white mb-6">Bàn Cân Chiến Thuật</h2>
+            <div id="compare-content" class="grid grid-cols-2 gap-8 text-center"></div>
+        </div>
+    </div>
+
+    <!-- MODAL CHI TIẾT SÚNG -->
+    <div id="detail-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4 hidden flex">
+        <div class="bg-[#16222f] border border-gray-700 rounded-2xl max-w-lg w-full p-6 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="modal-name" class="text-2xl font-bold uppercase text-red-500"></h2>
+            <div class="bg-[#0f1923] p-4 rounded-xl flex items-center justify-center my-4 border border-gray-800 h-32">
+                <img id="modal-img" src="" alt="Gun" class="max-h-24 object-contain">
+            </div>
+            <div class="grid grid-cols-3 gap-2 text-center text-xs pt-4 border-t border-gray-800">
+                <div class="bg-gray-800/60 p-2 rounded"><div class="text-red-400 font-bold" id="modal-head">0</div><div class="text-gray-400">Đầu</div></div>
+                <div class="bg-gray-800/60 p-2 rounded"><div class="text-yellow-400 font-bold" id="modal-body">0</div><div class="text-gray-400">Thân</div></div>
+                <div class="bg-gray-800/60 p-2 rounded"><div class="text-blue-400 font-bold" id="modal-leg">0</div><div class="text-gray-400">Chân</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CHI TIẾT ĐẶC VỤ & KỸ NĂNG -->
+    <div id="agent-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 items-center justify-center p-4 hidden flex">
+        <div class="bg-[#16222f] border border-gray-700 rounded-2xl max-w-3xl w-full p-6 relative max-h-[90vh] overflow-y-auto chat-scroll">
+            <button onclick="closeAgentModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="flex flex-col md:flex-row gap-6 items-center border-b border-gray-800 pb-6">
+                <img id="agent-modal-img" src="" class="w-36 h-36 object-contain bg-gray-950/60 rounded-xl border border-gray-800 p-2">
+                <div>
+                    <span id="agent-modal-role" class="text-xs font-bold text-red-400 uppercase tracking-widest"></span>
+                    <h2 id="agent-modal-name" class="text-3xl font-black text-white uppercase mt-1"></h2>
+                    <p id="agent-modal-desc" class="text-xs text-gray-300 mt-2 leading-relaxed"></p>
+                </div>
+            </div>
+
+            <!-- DANH SÁCH 4 KỸ NĂNG -->
+            <div class="mt-6">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-red-400 mb-4"><i class="fa-solid fa-bolt"></i> Bộ Kỹ Năng</h3>
+                <div id="agent-modal-abilities" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WIDGET CHATBOT AI -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="chat-window" class="bg-[#16222f] border border-gray-700 rounded-xl w-80 h-96 mb-4 shadow-2xl hidden flex flex-col overflow-hidden">
+            <div class="bg-red-600 p-3 text-white font-bold flex justify-between items-center">
+                <span><i class="fa-solid fa-robot"></i> Trợ Lý Chiến Thuật</span>
+                <button onclick="toggleChat()" class="hover:text-gray-200"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="chat-messages" class="flex-1 p-3 overflow-y-auto chat-scroll text-sm flex flex-col gap-3">
+                <div class="bg-gray-800 text-white p-2.5 rounded-lg rounded-tl-none w-11/12">Xin chào Đặc vụ! Tôi có thể tư vấn súng, tướng hoặc giáp gì cho bạn?</div>
+            </div>
+            <div class="p-2 border-t border-gray-700 flex gap-2">
+                <input type="text" id="chat-input" onkeypress="handleChatEnter(event)" placeholder="Hỏi AI..." class="flex-1 bg-gray-800 text-white text-sm px-3 py-2 rounded focus:outline-none focus:border-red-500 border border-gray-700">
+                <button onclick="sendChatMessage()" class="bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <button onclick="toggleChat()" class="bg-red-600 hover:bg-red-700 text-white w-14 h-14 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] flex items-center justify-center text-2xl transition-transform hover:scale-110">
+            <i class="fa-solid fa-comment-dots"></i>
+        </button>
+    </div>
+
+    <script type="module" src="home.js"></script>
+</body>
+</html>

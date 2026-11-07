@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VALORANT - Đăng Nhập</title>
+    <!-- Nhúng Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Gọi file CSS -->
+    <link rel="stylesheet" href="login.css">
+</head>
+<body class="p-4">
+
+    <!-- VIDEO NỀN ĐỘNG CHIẾN TRƯỜNG VALORANT -->
+    <div class="bg-video-container">
+        <video autoplay muted loop playsinline>
+            <source src="https://assets.contentstack.io/v3/assets/bltb6530b271fddd0b1/blt7696b998cf7d1595/61d90fc92404f32371b2fd8f/Episode_4_Disruption_Trailer.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="bg-overlay"></div>
+
+    <!-- KHUNG ĐĂNG NHẬP (Lớp auth-card kính mờ) -->
+    <div class="auth-card rounded-xl w-full max-w-md p-8 relative overflow-hidden">
+        
+        <!-- Logo V -->
+        <div class="text-center mb-6">
+            <span class="inline-block bg-red-600 text-white font-black text-3xl px-4 py-1 rounded-md tracking-tighter mb-2 shadow-[0_0_15px_rgba(220,38,38,0.8)]">V</span>
+            <h1 class="text-2xl font-black tracking-widest text-white uppercase mt-2">VALORANT <span class="text-red-500">ARSENAL</span></h1>
+        </div>
+
+        <!-- KHUNG THÔNG BÁO TRẠNG THÁI -->
+        <div id="alert-box" class="hidden mb-4 p-3 rounded-lg text-sm text-center font-bold border"></div>
+
+        <!-- FORM ĐĂNG NHẬP -->
+        <div id="login-form">
+            <form onsubmit="handleLogin(event)" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Email Đặc Vụ</label>
+                    <input type="email" id="login-email" required class="auth-input w-full px-4 py-3 rounded-lg focus:outline-none" placeholder="agent@valorant.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Mật mã truy cập</label>
+                    <input type="password" id="login-password" required class="auth-input w-full px-4 py-3 rounded-lg focus:outline-none" placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-fire w-full text-white py-3 rounded-lg font-bold">Xâm Nhập Hệ Thống</button>
+            </form>
+            <p class="text-center text-sm text-gray-400 mt-6">
+                Chưa được cấp quyền? <button type="button" onclick="switchForm('register')" class="text-red-500 font-bold hover:text-red-400 transition hover:underline">Ghi danh ngay</button>
+            </p>
+        </div>
+
+        <!-- FORM ĐĂNG KÝ -->
+        <div id="register-form" class="hidden">
+            <form onsubmit="handleRegister(event)" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Email Đặc Vụ Mới</label>
+                    <input type="email" id="reg-email" required class="auth-input w-full px-4 py-3 rounded-lg focus:outline-none" placeholder="new_agent@valorant.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Thiết lập Mật mã (Tối thiểu 6 ký tự)</label>
+                    <input type="password" id="reg-password" required class="auth-input w-full px-4 py-3 rounded-lg focus:outline-none" placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-fire w-full text-white py-3 rounded-lg font-bold">Kích Hoạt Hồ Sơ</button>
+            </form>
+            <p class="text-center text-sm text-gray-400 mt-6">
+                Đã có hồ sơ? <button type="button" onclick="switchForm('login')" class="text-red-500 font-bold hover:text-red-400 transition hover:underline">Quay lại Đăng nhập</button>
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Gọi file JavaScript -->
+    <script type="module" src="login.js"></script>
+</body>
+</html>
